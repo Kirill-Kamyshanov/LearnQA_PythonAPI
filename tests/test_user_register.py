@@ -12,15 +12,16 @@ from lib.assertions import Assertions
 class TestUserRegister(BaseCase):
 
     def test_create_user_successfully(self):
+        """Успешное создание пользователя"""
         data = self.prepare_registration_data()
         response = MyRequests.post('/user/', data=data)
 
         Assertions.assert_code_status(response, 200)
-        # print(response.content)
         Assertions.assert_json_has_key(response, "id")
 
 
     def test_create_user_with_existing_email(self):
+        """Попытка создать пользователя с уже существующим email"""
         email = 'vikontov@example.com'
         data = self.prepare_registration_data(email)
 
