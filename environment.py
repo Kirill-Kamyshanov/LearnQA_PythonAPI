@@ -1,9 +1,5 @@
 import os
 
-print(os.environ.get('ENV'))
-# пример задания переменной окружения в Винде
-# set MY_VAR='123'
-
 class Environment:
     DEV = 'dev'
     PROD = 'prod'
