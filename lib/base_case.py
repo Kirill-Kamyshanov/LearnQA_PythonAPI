@@ -3,6 +3,9 @@ from datetime import datetime
 
 from requests import Response
 
+from lib.assertions import Assertions
+from lib.my_requests import MyRequests
+
 
 class BaseCase:
 
@@ -37,3 +40,17 @@ class BaseCase:
             'lastName': 'learnqa',
             'email': email
         }
+
+
+    def create_test_user(self):
+        register_data = self.prepare_registration_data()
+        response1 = MyRequests.post('/user/', data=register_data)
+
+        Assertions.assert_code_status(response1, 200)
+        Assertions.assert_json_has_key(response1, 'id')
+
+        email = register_data['email']
+        first_name = register_data['firstName']
+        password = register_data['password']
+        user_id = self.get_json_value(response1, 'id')
+        return {'email': email, 'first_name': first_name, 'password':password, 'user_id': user_id}
