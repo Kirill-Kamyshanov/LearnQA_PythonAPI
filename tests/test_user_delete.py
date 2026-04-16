@@ -25,7 +25,8 @@ class TestUserDelete(BaseCase):
                                      cookies={'auth_sid': auth_sid},
                                      )
         Assertions.assert_code_status(response, 400)
-        assert response.json() == {'error': 'Please, do not delete test users with ID 1, 2, 3, 4 or 5.'}, \
+        # сломал тест для настройки репортера
+        assert response.json() == {'1111111111error': 'Please, do not delete test users with ID 1, 2, 3, 4 or 5.'}, \
             f'Invalid response body: {response.json()}'
 
 
@@ -94,5 +95,6 @@ class TestUserDelete(BaseCase):
         Assertions.assert_code_status(response2, 400)
         # Здесь тест падает с некорректным кодом, так что ожидаемое тело ответа я не знаю. Написал как оно могло бы выглядеть
         assert response2.json() == {'error': 'Attempt to delete another user'}, f'Invalid response body: {response2.json()}'
+
 
 
