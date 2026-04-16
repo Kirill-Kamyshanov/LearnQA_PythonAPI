@@ -47,3 +47,34 @@ class TestUserEdit(BaseCase):
                                              new_name,
                                              'Wrong name of the user after edit'
                                              )
+
+
+
+    def test_edit_just_created_user_without_authorization(self):
+        """Попытка изменить данные пользователя без авторизации"""
+        # REGISTER
+        register_data = self.prepare_registration_data()
+        response1 = MyRequests.post('/user/', data=register_data)
+
+        Assertions.assert_code_status(response1, 200)
+        Assertions.assert_json_has_key(response1, 'id')
+
+        user_id = self.get_json_value(response1, 'id')
+
+
+        # EDIT
+        new_name = 'Changed Name'
+        response2 = MyRequests.put(f'/user/{user_id}',
+                                   data={'firstName': new_name}
+                                   )
+
+        Assertions.assert_code_status(response2, 400)
+        assert response2.json() == {'error': 'Auth token not supplied'}, f"Unexpectable response body: {response2.json()}"
+
+
+
+
+
+# - Попытаемся изменить данные пользователя, будучи авторизованными другим пользователем
+# - Попытаемся изменить email пользователя, будучи авторизованными тем же пользователем, на новый email без символа @
+# - Попытаемся изменить firstName пользователя, будучи авторизованными тем же пользователем, на очень короткое значение в один символ
