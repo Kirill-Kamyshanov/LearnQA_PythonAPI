@@ -1,9 +1,15 @@
+import random
+import string
+
+import pytest
+from gevent.testing import params
+
 from lib.my_requests import MyRequests
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
 
-class TestUserRegister(BaseCase):
 
+class TestUserRegister(BaseCase):
 
     def test_create_user_successfully(self):
         data = self.prepare_registration_data()
@@ -14,14 +20,50 @@ class TestUserRegister(BaseCase):
         Assertions.assert_json_has_key(response, "id")
 
 
-
     def test_create_user_with_existing_email(self):
         email = 'vikontov@example.com'
         data = self.prepare_registration_data(email)
 
         response = MyRequests.post('/user/', data=data)
-        # print(response.status_code)
-        # print(response.content)
 
         Assertions.assert_code_status(response, 400)
-        assert response.content.decode('utf-8') == f"Users with email '{email}' already exists", f"Unexpected response content {response.content}"
+        assert response.content.decode(
+            'utf-8') == f"Users with email '{email}' already exists", f"Unexpected response content {response.content}"
+
+
+    def test_create_user_without_at_symbol(self):
+        """Создание пользователя с некорректным email - без символа @"""
+        data = self.prepare_registration_data()
+        data['email'] = data['email'].replace('@', '')
+        response = MyRequests.post('/user/', data=data)
+        Assertions.assert_code_status(response, 400)
+        assert response.content.decode('utf-8') == 'Invalid email format'
+
+
+    @pytest.mark.parametrize('field_to_remove', ['firstName', 'lastName', 'email', 'password', 'username'])
+    def test_create_user_without_all_necessary_fields(self, field_to_remove):
+        """Создание пользователя без указания одного из полей"""
+        data = self.prepare_registration_data()
+        del data[field_to_remove]
+        response = MyRequests.post('/user/', data=data)
+        Assertions.assert_code_status(response, 400)
+        assert response.content.decode('utf-8') == f'The following required params are missed: {field_to_remove}'
+
+
+    def test_create_user_with_short_name(self):
+        """Создание пользователя с очень коротким именем в один символ"""
+        data = self.prepare_registration_data()
+        data['firstName'] = random.choice(string.ascii_uppercase)
+        response = MyRequests.post('/user/', data=data)
+        Assertions.assert_code_status(response, 400)
+        assert response.content.decode('utf-8') == "The value of 'firstName' field is too short"
+
+
+    def test_create_user_with_too_long_name(self):
+        """Создание пользователя с очень длинным именем - длиннее 250 символов (с заглавной буквы)"""
+        data = self.prepare_registration_data()
+        data['firstName'] = random.choice(string.ascii_uppercase) + ''.join(
+            random.choices(string.ascii_lowercase, k=250))
+        response = MyRequests.post('/user/', data=data)
+        Assertions.assert_code_status(response, 400)
+        assert response.content.decode('utf-8') == "The value of 'firstName' field is too long"
