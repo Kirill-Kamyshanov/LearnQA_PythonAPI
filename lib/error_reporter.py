@@ -1,9 +1,5 @@
 import datetime
 import os
-from requests import Response
-
-#TODO \
-# 1. Задание - запустить тесты на дев окружении
 
 
 class ErrorReporter:
