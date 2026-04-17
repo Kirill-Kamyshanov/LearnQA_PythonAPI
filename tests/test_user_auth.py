@@ -33,13 +33,13 @@ class TestUserAuth(BaseCase):
                                  headers={'x-csrf-token': self.token},
                                  cookies={'auth_sid': self.auth_sid})
 
-
-        Assertions.assert_json_value_by_name(
-            response2,
-            "user_id",
-            self.user_id_from_auth_method,
-            "User id from auth method is not equal to user id from check method"
-        )
+        with allure.step('Check successful authorization'):
+            Assertions.assert_json_value_by_name(
+                response2,
+                "user_id",
+                self.user_id_from_auth_method,
+                "User id from auth method is not equal to user id from check method"
+            )
 
 
     @allure.description('This test checks authorization status w/o sending auth cookie or token')
@@ -47,17 +47,19 @@ class TestUserAuth(BaseCase):
     @pytest.mark.parametrize('condition', exclude_params)
     def test_negative_auth_check(self, condition):
 
+        with allure.step('Trying to auth user w/o sending auth cookie or token'):
+            if condition == 'no_cookie':
+                response2 = MyRequests.get('/user/auth',
+                                         headers={'x-csrf-token': self.token})
+            else:
+                response2 = MyRequests.get('/user/auth',
 
-        if condition == 'no_cookie':
-            response2 = MyRequests.get('/user/auth',
-                                     headers={'x-csrf-token': self.token})
-        else:
-            response2 = MyRequests.get('/user/auth',
-                                     cookies={'auth_sid': self.auth_sid})
+                                         cookies={'auth_sid': self.auth_sid})
 
-        Assertions.assert_json_value_by_name(
-            response2,
-            "user_id",
-            0,
-            f"User is authorized with condition {condition}"
-        )
+        with allure.step('Check auth denied'):
+            Assertions.assert_json_value_by_name(
+                response2,
+                "user_id",
+                0,
+                f"User is authorized with condition {condition}"
+            )
