@@ -8,8 +8,8 @@ from lib.assertions import Assertions
 @allure.epic('Authorization cases')
 class TestUserAuth(BaseCase):
     exclude_params = [
-        ("no_cookie"),
-        ("no_token")
+        "no_cookie",
+        "no_token"
     ]
 
     def setup_method(self):

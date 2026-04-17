@@ -7,8 +7,28 @@ from lib.error_reporter import ErrorReporter
 class Assertions:
 
     @staticmethod
+    def check_response_body_with_decoding(response: Response, expected_response_body):
+        """Проверка соответствия фактического тела ответа в JSON ожидаемому"""
+        try:
+            response_body = response.content.decode('utf-8')
+        except UnicodeDecodeError:
+            ErrorReporter.add_error(step='Декодирование ответа в utf-8',
+                                    waiting_result='Ответ успешно преобразован в кодировку utf-8',
+                                    actual_result=f"Ошибка при попытке декодирования:'{response.text}'")
+            assert False, f"Error during convertion response. Response text is '{response.text}'"
+
+        if response_body != expected_response_body:
+            ErrorReporter.add_error(step='Проверка соответствия фактического тела ответа в unicode ожидаемому',
+                                    waiting_result=f'{expected_response_body}',
+                                    actual_result=f"{response_body}")
+        assert response_body == expected_response_body, f"Incorrect response_body: '{response_body}'"
+
+
+
+
+    @staticmethod
     def check_response_body(response: Response, expected_response_body):
-        """Проверка соответствия фактического тела ответа ожидаемому"""
+        """Проверка соответствия фактического тела ответа в JSON ожидаемому"""
         try:
             response_body = response.json()
         except json.decoder.JSONDecodeError:
@@ -18,7 +38,7 @@ class Assertions:
             assert False, f"Response  is not in JSON format. Response text is '{response.text}'"
 
         if response_body != expected_response_body:
-            ErrorReporter.add_error(step='Проверка соответствия фактического тела ответа ожидаемому',
+            ErrorReporter.add_error(step='Проверка соответствия фактического тела ответа JSON ожидаемому',
                                     waiting_result=f"{expected_response_body}",
                                     actual_result=f"{response_body}"
                                     )

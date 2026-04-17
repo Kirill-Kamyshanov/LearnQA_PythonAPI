@@ -1,8 +1,6 @@
 import random
 import string
-
 import pytest
-from gevent.testing import params
 
 from lib.my_requests import MyRequests
 from lib.base_case import BaseCase
@@ -28,8 +26,11 @@ class TestUserRegister(BaseCase):
         response = MyRequests.post('/user/', data=data)
 
         Assertions.assert_code_status(response, 400)
-        assert response.content.decode(
-            'utf-8') == f"Users with email '{email}' already exists", f"Unexpected response content {response.content}"
+        Assertions.check_response_body_with_decoding(response=response,
+                                                     expected_response_body=f"Users with email '{email}' already exists")
+
+
+
 
 
     def test_create_user_without_at_symbol(self):
@@ -38,7 +39,9 @@ class TestUserRegister(BaseCase):
         data['email'] = data['email'].replace('@', '')
         response = MyRequests.post('/user/', data=data)
         Assertions.assert_code_status(response, 400)
-        assert response.content.decode('utf-8') == 'Invalid email format'
+        Assertions.check_response_body_with_decoding(response=response, expected_response_body='Invalid email format')
+
+
 
 
     @pytest.mark.parametrize('field_to_remove', ['firstName', 'lastName', 'email', 'password', 'username'])
@@ -57,7 +60,8 @@ class TestUserRegister(BaseCase):
         data['firstName'] = random.choice(string.ascii_uppercase)
         response = MyRequests.post('/user/', data=data)
         Assertions.assert_code_status(response, 400)
-        assert response.content.decode('utf-8') == "The value of 'firstName' field is too short"
+        Assertions.check_response_body_with_decoding(response=response,
+                                                     expected_response_body="The value of 'firstName' field is too short")
 
 
     def test_create_user_with_too_long_name(self):
@@ -67,4 +71,5 @@ class TestUserRegister(BaseCase):
             random.choices(string.ascii_lowercase, k=250))
         response = MyRequests.post('/user/', data=data)
         Assertions.assert_code_status(response, 400)
-        assert response.content.decode('utf-8') == "The value of 'firstName' field is too long"
+        Assertions.check_response_body_with_decoding(response=response,
+                                                     expected_response_body="The value of 'firstName' field is too long")

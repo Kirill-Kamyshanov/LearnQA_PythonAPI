@@ -65,8 +65,7 @@ class TestUserEdit(BaseCase):
                                    )
 
         Assertions.assert_code_status(response2, 400)
-        assert response2.json() == {'error': 'Auth token not supplied'}, f"Unexpectable response body: {response2.json()}"
-
+        Assertions.check_response_body(response=response2, expected_response_body={'error': 'Auth token not supplied'})
 
 
 
@@ -101,7 +100,7 @@ class TestUserEdit(BaseCase):
         Assertions.assert_code_status(response2, 400)
         # Ожидаемое тело ответа я не знаю, так как этот тест падает. Я могу авторизоваться одним юзером и изменить данные другого
         # Текст ниже добавил для примера каким он мог бы быть
-        assert response2.json() == {'error': 'Attempt to edit another user`s data '}, f"Invalid response body: {response2.json()}"
+        Assertions.check_response_body(response=response2, expected_response_body={'error': 'Attempt to edit another user`s data '})
 
 
 
@@ -136,12 +135,13 @@ class TestUserEdit(BaseCase):
                                   )
 
         Assertions.assert_code_status(response2, 400)
-        assert response2.json() == {'error': 'Invalid email format'}, f"Unexpected response body: {response2.json()}"
+        Assertions.check_response_body(response=response2, expected_response_body={'error': 'Invalid email format'})
 
 
 
     def test_edit_created_user_with_invalid_short_firstname(self):
-        """Попытка изменить firstName пользователя, будучи авторизованными тем же пользователем, на очень короткое значение в один символ"""
+        """Попытка изменить firstName пользователя, будучи авторизованными тем же пользователем,
+        на очень короткое значение в один символ"""
         # REGISTER
         user_data = self.create_test_user()
         user_id = user_data.get('user_id')
@@ -167,4 +167,4 @@ class TestUserEdit(BaseCase):
                                    )
 
         Assertions.assert_code_status(response2, 400)
-        assert response2.json() == {'error': 'No data to update'}, f"Unexpected response body: {response2.json()}"
+        Assertions.check_response_body(response=response2, expected_response_body={'error': 'No data to update'})
