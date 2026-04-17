@@ -2,6 +2,12 @@ import datetime
 import os
 from requests import Response
 
+#TODO \
+# 1.В assertions вывести декодирование JSON в отдельную защищённую функцию, чтобы не повторяться.\
+# 2. Настроить соответствие текстовки первой строки отчёта об ошибках правилам русского языка.\
+# 3. Задание - запустить тесты на дев окружении
+
+
 class ErrorReporter:
     file_name = f"error_reports/report_" + str(datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")) + ".log"
     error_number = 0

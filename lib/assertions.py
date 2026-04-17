@@ -6,9 +6,25 @@ from lib.error_reporter import ErrorReporter
 
 class Assertions:
 
+
+    @staticmethod
+    def _json_decoding(response):
+        """Служебная функция для декодирования ответов в формате JSON"""
+        try:
+            response_body = response.json()
+        except json.decoder.JSONDecodeError:
+            ErrorReporter.add_error(step='Декодирование JSON ответа',
+                                    waiting_result='Ответ успешно преобразован в JSON объект',
+                                    actual_result=f"Ошибка при попытке декодирования. Ответ не в JSON формате:'{response.text}'")
+            assert False, f"Response  is not in JSON format. Response text is '{response.text}'"
+            return False
+        return response_body
+
+
+
     @staticmethod
     def check_response_body_with_decoding(response: Response, expected_response_body):
-        """Проверка соответствия фактического тела ответа в JSON ожидаемому"""
+        """Проверка соответствия фактического тела ответа в unicode ожидаемому"""
         try:
             response_body = response.content.decode('utf-8')
         except UnicodeDecodeError:
@@ -29,13 +45,7 @@ class Assertions:
     @staticmethod
     def check_response_body(response: Response, expected_response_body):
         """Проверка соответствия фактического тела ответа в JSON ожидаемому"""
-        try:
-            response_body = response.json()
-        except json.decoder.JSONDecodeError:
-            ErrorReporter.add_error(step='Декодирование JSON ответа',
-                                    waiting_result='Ответ успешно преобразован в JSON объект',
-                                    actual_result=f"Ошибка при попытке декодирования. Ответ не в JSON формате:'{response.text}'")
-            assert False, f"Response  is not in JSON format. Response text is '{response.text}'"
+        response_body = Assertions._json_decoding(response)
 
         if response_body != expected_response_body:
             ErrorReporter.add_error(step='Проверка соответствия фактического тела ответа JSON ожидаемому',
@@ -50,14 +60,7 @@ class Assertions:
     @staticmethod
     def assert_json_value_by_name(response: Response, name, expected_value, error_message):
         """Проверка наличия и значения ключа в JSON объекте"""
-        try:
-            response_body = response.json()
-        except json.decoder.JSONDecodeError:
-            ErrorReporter.add_error(step='Декодирование JSON ответа',
-                                    waiting_result='Ответ успешно преобразован в JSON объект',
-                                    actual_result=f"Ошибка при попытке декодирования. Ответ не в JSON формате:'{response.text}'"
-                                    )
-            assert False, f"Response  is not in JSON format. Response text is '{response.text}'"
+        response_body = Assertions._json_decoding(response)
 
         if name not in response_body:
             ErrorReporter.add_error(step='Проверка наличия ключа в теле ответа',
@@ -89,14 +92,7 @@ class Assertions:
     @staticmethod
     def assert_json_has_no_key(response: Response, name):
         """Проверка отсутствия одного ключа в JSON объекте"""
-        try:
-            response_body = response.json()
-        except json.decoder.JSONDecodeError:
-            ErrorReporter.add_error(step='Декодирование JSON ответа',
-                                    waiting_result='Ответ успешно преобразован в JSON объект',
-                                    actual_result=f"Ошибка при попытке декодирования. Ответ не в JSON формате:'{response.text}'"
-                                    )
-            assert False, f"Response  is not in JSON format. Response text is '{response.text}'"
+        response_body = Assertions._json_decoding(response)
 
         if name in response_body:
             ErrorReporter.add_error(step=f"Проверка отсутствия ключа '{name}' в теле ответа",
@@ -109,14 +105,7 @@ class Assertions:
     @staticmethod
     def assert_json_has_no_keys(response: Response, names: list):
         """Проверка отсутствия набора ключей в JSON объекте"""
-        try:
-            response_body = response.json()
-        except json.decoder.JSONDecodeError:
-            ErrorReporter.add_error(step='Декодирование JSON ответа',
-                                    waiting_result='Ответ успешно преобразован в JSON объект',
-                                    actual_result=f"Ошибка при попытке декодирования. Ответ не в JSON формате:'{response.text}'"
-                                    )
-            assert False, f"Response  is not in JSON format. Response text is '{response.text}'"
+        response_body = Assertions._json_decoding(response)
 
         for name in names:
             if name in response_body:
@@ -130,14 +119,7 @@ class Assertions:
     @staticmethod
     def assert_json_has_key(response: Response, name):
         """Проверка наличия одного ключа в JSON объекте"""
-        try:
-            response_body = response.json()
-        except json.decoder.JSONDecodeError:
-            ErrorReporter.add_error(step='Декодирование JSON ответа',
-                                    waiting_result='Ответ успешно преобразован в JSON объект',
-                                    actual_result=f"Ошибка при попытке декодирования. Ответ не в JSON формате:'{response.text}'"
-                                    )
-            assert False, f"Response  is not in JSON format. Response text is '{response.text}'"
+        response_body = Assertions._json_decoding(response)
 
         if name not in response_body:
             ErrorReporter.add_error(step=f"Проверка наличия ключа '{name}' в теле ответа",
@@ -150,14 +132,7 @@ class Assertions:
     @staticmethod
     def assert_json_has_keys(response: Response, names: list):
         """Проверка наличия набора ключей в JSON объекте"""
-        try:
-            response_body = response.json()
-        except json.decoder.JSONDecodeError:
-            ErrorReporter.add_error(step='Декодирование JSON ответа',
-                                    waiting_result='Ответ успешно преобразован в JSON объект',
-                                    actual_result=f"Ошибка при попытке декодирования. Ответ не в JSON формате:'{response.text}'"
-                                    )
-            assert False, f"Response  is not in JSON format. Response text is '{response.text}'"
+        response_body = Assertions._json_decoding(response)
 
         for name in names:
             if name not in response_body:
