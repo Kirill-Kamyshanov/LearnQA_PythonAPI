@@ -1,10 +1,13 @@
+import allure
 from lib.my_requests import MyRequests
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
 
-
+@allure.epic('Deletion cases')
 class TestUserDelete(BaseCase):
 
+    @allure.description('Attempt to delete user with ID equals 2')
+    @allure.feature('Validation to delete user')
     def test_delete_user_with_id_equals_2(self):
         """Попытка удалить пользователя по ID 2"""
         # AUTH
@@ -29,7 +32,8 @@ class TestUserDelete(BaseCase):
                                        expected_response_body={'error': 'Please, do not delete test users with ID 1, 2, 3, 4 or 5.'})
 
 
-
+    @allure.description('Delete user successfully')
+    @allure.feature('Deleting user')
     def test_delete_user_successfully(self):
         """Позитивный сценарий удаления пользователя: создание, авторизация, удаление, проверка удаления"""
         # REGISTER
@@ -68,6 +72,8 @@ class TestUserDelete(BaseCase):
         Assertions.assert_code_status(response3, 404)
 
 
+    @allure.description('Delete user being authorized as different one')
+    @allure.feature('Validation to delete user')
     def test_delete_user_by_another_user(self):
         """Попытка удалить пользователя, будучи авторизованным другим пользователем"""
         # REGISTER

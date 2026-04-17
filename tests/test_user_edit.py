@@ -1,3 +1,4 @@
+import allure
 import random
 import string
 
@@ -5,7 +6,11 @@ from lib.my_requests import MyRequests
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
 
+@allure.epic('Edition cases')
 class TestUserEdit(BaseCase):
+
+    @allure.description('Edit user successfully')
+    @allure.feature('Creation user')
     def test_edit_just_created_user(self):
         # REGISTER
         register_data = self.prepare_registration_data()
@@ -51,7 +56,8 @@ class TestUserEdit(BaseCase):
                                              )
 
 
-
+    @allure.description('Edit just created user without authorization')
+    @allure.feature('Validation to create user')
     def test_edit_just_created_user_without_authorization(self):
         """Попытка изменить данные пользователя без авторизации"""
         # REGISTER
@@ -68,7 +74,8 @@ class TestUserEdit(BaseCase):
         Assertions.check_response_body(response=response2, expected_response_body={'error': 'Auth token not supplied'})
 
 
-
+    @allure.description('Edit just created user with different authorization')
+    @allure.feature('Validation to create user')
     def test_edit_created_user_with_different_authorization(self):
         """Попытка изменить данные пользователя, будучи авторизованными другим пользователем"""
         # REGISTER
@@ -105,7 +112,8 @@ class TestUserEdit(BaseCase):
 
 
 
-
+    @allure.description('Edit just created user with invalid email')
+    @allure.feature('Validation to create user')
     def test_edit_created_user_with_invalid_email(self):
         """Попытка изменить email пользователя, будучи авторизованными тем же пользователем, на новый email без символа @"""
         # REGISTER
@@ -137,7 +145,8 @@ class TestUserEdit(BaseCase):
         Assertions.check_response_body(response=response2, expected_response_body={'error': 'Invalid email format'})
 
 
-
+    @allure.description('Edit just created user with invalid short firstname')
+    @allure.feature('Validation to create user')
     def test_edit_created_user_with_invalid_short_firstname(self):
         """Попытка изменить firstName пользователя, будучи авторизованными тем же пользователем,
         на очень короткое значение в один символ"""

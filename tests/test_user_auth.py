@@ -26,10 +26,13 @@ class TestUserAuth(BaseCase):
 
 
     @allure.description('This test successfully authorize user by email and password')
+    @allure.feature('Authorization')
     def test_auth_user(self):
-        response2 = MyRequests.get('/user/auth',
+        with allure.step('Authorization'):
+            response2 = MyRequests.get('/user/auth',
                                  headers={'x-csrf-token': self.token},
                                  cookies={'auth_sid': self.auth_sid})
+
 
         Assertions.assert_json_value_by_name(
             response2,
@@ -40,6 +43,7 @@ class TestUserAuth(BaseCase):
 
 
     @allure.description('This test checks authorization status w/o sending auth cookie or token')
+    @allure.feature('Auth validation ')
     @pytest.mark.parametrize('condition', exclude_params)
     def test_negative_auth_check(self, condition):
 
