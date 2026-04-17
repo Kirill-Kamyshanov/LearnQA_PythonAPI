@@ -98,9 +98,8 @@ class TestUserEdit(BaseCase):
                                    )
 
         Assertions.assert_code_status(response2, 400)
-        # Ожидаемое тело ответа я не знаю, так как этот тест падает. Я могу авторизоваться одним юзером и изменить данные другого
-        # Текст ниже добавил для примера каким он мог бы быть
-        Assertions.check_response_body(response=response2, expected_response_body={'error': 'Attempt to edit another user`s data '})
+        Assertions.check_response_body(response=response2,
+                                       expected_response_body={'error': 'This user can only edit their own data.'})
 
 
 

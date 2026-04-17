@@ -93,8 +93,8 @@ class TestUserDelete(BaseCase):
                                       cookies={'auth_sid': auth_sid}
                                       )
         Assertions.assert_code_status(response2, 400)
-        # Здесь тест падает с некорректным кодом, так что ожидаемое тело ответа я не знаю. Написал как оно могло бы выглядеть
-        Assertions.check_response_body(response=response2, expected_response_body={'error': 'Attempt to delete another user'})
+        Assertions.check_response_body(response=response2,
+                                       expected_response_body={'error': 'This user can only delete their own account.'})
 
 
 
