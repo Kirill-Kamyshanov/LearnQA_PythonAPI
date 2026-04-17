@@ -13,14 +13,14 @@ class ErrorReporter:
 
 
     @classmethod
-    def add_error(cls, response: Response):
+    def add_error(cls, step, waiting_result, actual_result):
         data_to_add = f'Всего упало {cls.error_number} тестов:\n'
         data_to_add += "\n"
         data_to_add += f'Тест {cls.error_number + 1}:\n'
         data_to_add += f'{os.environ.get('PYTEST_CURRENT_TEST')}\n'
-        data_to_add += f'<Шаги>\n'
-        data_to_add += f'Ожидаемый результат: <описание>\n'
-        data_to_add += f'Действительный результат: <описание>\n'
+        data_to_add += f'Шаг: {step}\n'
+        data_to_add += f'Ожидаемый результат: {waiting_result}\n'
+        data_to_add += f'Действительный результат: {actual_result}\n'
         data_to_add += "\n"
         cls.error_number += 1
 

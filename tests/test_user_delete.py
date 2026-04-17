@@ -25,9 +25,9 @@ class TestUserDelete(BaseCase):
                                      cookies={'auth_sid': auth_sid},
                                      )
         Assertions.assert_code_status(response, 400)
-        # сломал тест для настройки репортера
-        assert response.json() == {'1111111111error': 'Please, do not delete test users with ID 1, 2, 3, 4 or 5.'}, \
-            f'Invalid response body: {response.json()}'
+        Assertions.check_response_body(response=response,
+                                       expected_response_body={'error': 'Please, do not delete test users with ID 1, 2, 3, 4 or 5.'})
+
 
 
     def test_delete_user_successfully(self):
@@ -57,7 +57,7 @@ class TestUserDelete(BaseCase):
                                       )
         Assertions.assert_code_status(response2, 200)
         # Здесь юзер успешно удаляется (и после проверка даёт код 404. Но тело ответа {'success': '!'} явно не ожидаемое
-        assert response2.json() == {"success": f"user {user_id} was deleted"}, f'Unexpected response body: {response2.json()}'
+        Assertions.check_response_body(response=response2, expected_response_body={"success": f"user {user_id} was deleted"})
 
         # CHECK DELETION
         response3 = MyRequests.get(f'/user/{user_id}',
@@ -94,7 +94,7 @@ class TestUserDelete(BaseCase):
                                       )
         Assertions.assert_code_status(response2, 400)
         # Здесь тест падает с некорректным кодом, так что ожидаемое тело ответа я не знаю. Написал как оно могло бы выглядеть
-        assert response2.json() == {'error': 'Attempt to delete another user'}, f'Invalid response body: {response2.json()}'
+        Assertions.check_response_body(response=response2, expected_response_body={'error': 'Attempt to delete another user'})
 
 
 
